@@ -7,11 +7,32 @@ function calcularDiasJuntos() {
     const diferenca = dataAtual - dataInicio;
     const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
     
-    document.getElementById('diasJuntos').textContent = dias;
+    const element = document.getElementById('diasJuntos');
+    if (element) {
+        animarNumero(element, dias);
+    }
+}
+
+// Animar números
+function animarNumero(element, finalNumber) {
+    let currentNumber = 0;
+    const increment = Math.ceil(finalNumber / 50);
+    
+    const interval = setInterval(() => {
+        currentNumber += increment;
+        if (currentNumber >= finalNumber) {
+            currentNumber = finalNumber;
+            clearInterval(interval);
+        }
+        element.textContent = currentNumber;
+    }, 30);
 }
 
 // Chamar ao carregar a página
-calcularDiasJuntos();
+document.addEventListener('DOMContentLoaded', () => {
+    calcularDiasJuntos();
+    setupObserver();
+});
 
 // ===== MENSAGENS ESPECIAIS =====
 const mensagensArray = [
@@ -35,15 +56,22 @@ function mostrarMensagem(index) {
     const display = document.getElementById('mensagemDisplay');
     const texto = document.getElementById('textoMensagem');
     
+    if (!display) return;
+    
     mensagemAtual = index;
     texto.textContent = mensagensArray[index].texto;
     
     display.classList.add('show');
+    
+    // Efeito de sparkle
+    criarSparkles(display);
 }
 
 function fecharMensagem() {
     const display = document.getElementById('mensagemDisplay');
-    display.classList.remove('show');
+    if (display) {
+        display.classList.remove('show');
+    }
 }
 
 // Fechar mensagem ao clicar fora
@@ -51,36 +79,37 @@ document.addEventListener('click', function(event) {
     const display = document.getElementById('mensagemDisplay');
     const mensagensContainer = document.querySelector('.mensagens-container');
     
-    if (display.classList.contains('show') && 
+    if (display && display.classList.contains('show') && 
         !display.contains(event.target) && 
-        !mensagensContainer.contains(event.target)) {
+        mensagensContainer && !mensagensContainer.contains(event.target)) {
         fecharMensagem();
     }
 });
 
 // ===== CURIOSIDADES ROMÂNTICAS =====
 const curiosidades = [
-    "Sabias que o amor verdadeiro é quando você quer estar perto da pessoa sempre?",
-    "Sabias que um simples sorriso pode fazer uma grande diferença no dia de alguém?",
-    "Sabias que casais que riem juntos têm relacionamentos mais duradouros?",
-    "Sabias que agarrar a mão de alguém aumenta os sentimentos de amor e confiança?",
-    "Sabias que passar tempo juntos é mais importante do que coisas materiais?",
-    "Sabias que discutir abertamente fortalece o relacionamento?",
-    "Sabias que pequenos gestos de carinho têm mais impacto do que você imagina?",
-    "Sabias que ouvir ativamente é uma forma de mostrar amor genuíno?",
-    "Sabias que apoiar os sonhos do outro é fundamental para um relacionamento feliz?",
-    "Sabias que dizer 'eu te amo' nunca é demais quando você realmente sente?",
-    "Sabias que casais que compartilham interesses têm mais conexão?",
-    "Sabias que o perdão é a chave para um amor duradouro?",
-    "Sabias que criar memórias juntos é mais importante que ter coisas juntos?",
-    "Sabias que surpresas pequenas mantêm a centelha viva?",
-    "Sabias que você é melhor com essa pessoa ao seu lado?"
+    "💕 Sabias que o amor verdadeiro é quando você quer estar perto da pessoa sempre?",
+    "😊 Sabias que um simples sorriso pode fazer uma grande diferença no dia de alguém?",
+    "🎵 Sabias que casais que riem juntos têm relacionamentos mais duradouros?",
+    "🤝 Sabias que agarrar a mão de alguém aumenta os sentimentos de amor e confiança?",
+    "🌍 Sabias que passar tempo juntos é mais importante do que coisas materiais?",
+    "💬 Sabias que discutir abertamente fortalece o relacionamento?",
+    "💝 Sabias que pequenos gestos de carinho têm mais impacto do que você imagina?",
+    "👂 Sabias que ouvir ativamente é uma forma de mostrar amor genuíno?",
+    "🌟 Sabias que apoiar os sonhos do outro é fundamental para um relacionamento feliz?",
+    "💖 Sabias que dizer 'eu te amo' nunca é demais quando você realmente sente?",
+    "🎯 Sabias que casais que compartilham interesses têm mais conexão?",
+    "🕊️ Sabias que o perdão é a chave para um amor duradouro?",
+    "📸 Sabias que criar memórias juntas é mais importante que ter coisas juntas?",
+    "🎁 Sabias que surpresas pequenas mantêm a centelha viva?",
+    "✨ Sabias que você é melhor com essa pessoa ao seu lado?"
 ];
 
 let curiosidadeAtual = 0;
 
 function proximaCuriosidade() {
     const quoteText = document.getElementById('quoteText');
+    if (!quoteText) return;
     
     curiosidadeAtual = Math.floor(Math.random() * curiosidades.length);
     
@@ -90,141 +119,121 @@ function proximaCuriosidade() {
     setTimeout(() => {
         quoteText.textContent = curiosidades[curiosidadeAtual];
         quoteText.style.opacity = '1';
-    }, 200);
+    }, 300);
 }
 
 // Adicionar transição suave ao texto
 const quoteText = document.getElementById('quoteText');
-quoteText.style.transition = 'opacity 0.3s ease';
+if (quoteText) {
+    quoteText.style.transition = 'opacity 0.3s ease';
+}
 
-// ===== ANIMAÇÃO SUAVE DO SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// ===== EFFECT AO FAZER SCROLL =====
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Aplicar observador em seções
-document.querySelectorAll('section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(30px)';
-    section.style.transition = 'all 0.6s ease-out';
-    observer.observe(section);
-});
-
-// ===== EFEITO PARALLAX NO HERO =====
-window.addEventListener('mousemove', (e) => {
-    const heroBg = document.querySelector('.hero::before');
-    if (heroBg) {
-        const x = (e.clientX / window.innerWidth) * 20;
-        const y = (e.clientY / window.innerHeight) * 20;
+// ===== EFEITOS DE SPARKLE =====
+function criarSparkles(element) {
+    const rect = element.getBoundingClientRect();
+    
+    for (let i = 0; i < 15; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.style.position = 'fixed';
+        sparkle.style.left = (rect.left + Math.random() * rect.width) + 'px';
+        sparkle.style.top = (rect.top + Math.random() * rect.height) + 'px';
+        sparkle.style.width = '8px';
+        sparkle.style.height = '8px';
+        sparkle.style.backgroundColor = '#ff1744';
+        sparkle.style.borderRadius = '50%';
+        sparkle.style.pointerEvents = 'none';
+        sparkle.style.zIndex = '9999';
+        sparkle.style.boxShadow = '0 0 15px #ff1744';
+        
+        document.body.appendChild(sparkle);
+        
+        const randomX = (Math.random() - 0.5) * 150;
+        const randomY = (Math.random() - 0.5) * 150;
+        
+        sparkle.animate([
+            { 
+                transform: 'translate(0, 0) scale(1)',
+                opacity: 1
+            },
+            { 
+                transform: `translate(${randomX}px, ${randomY}px) scale(0)`,
+                opacity: 0
+            }
+        ], {
+            duration: 1000,
+            easing: 'ease-out'
+        });
+        
+        setTimeout(() => sparkle.remove(), 1000);
     }
-});
+}
+
+// ===== SETUP SCROLL OBSERVER =====
+function setupObserver() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.razao-item, .timeline-content, .galeria-item').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+}
+
+// ===== CONFETE AO MOSTRAR MENSAGEM =====
+function criarConfete() {
+    for (let i = 0; i < 12; i++) {
+        const confete = document.createElement('div');
+        confete.style.position = 'fixed';
+        confete.style.pointerEvents = 'none';
+        confete.innerHTML = '💕';
+        confete.style.fontSize = '2rem';
+        confete.style.left = Math.random() * 100 + '%';
+        confete.style.top = '-30px';
+        confete.style.zIndex = '9998';
+        confete.style.opacity = '1';
+        
+        document.body.appendChild(confete);
+        
+        const randomX = (Math.random() - 0.5) * 300;
+        const duration = 2.5 + Math.random() * 1.5;
+        
+        confete.animate([
+            { 
+                transform: 'translateY(0) translateX(0) rotate(0deg)',
+                opacity: 1
+            },
+            { 
+                transform: `translateY(${window.innerHeight + 100}px) translateX(${randomX}px) rotate(360deg)`,
+                opacity: 0
+            }
+        ], {
+            duration: duration * 1000,
+            easing: 'ease-in'
+        });
+        
+        setTimeout(() => confete.remove(), duration * 1000);
+    }
+}
+
+// Envolver mostrarMensagem para adicionar confete
+const originalMostrar = window.mostrarMensagem;
+window.mostrarMensagem = function(index) {
+    originalMostrar(index);
+    criarConfete();
+};
 
 // ===== ATUALIZAR DIAS JUNTOS DIARIAMENTE =====
 setInterval(calcularDiasJuntos, 1000 * 60 * 60); // Atualizar a cada hora
-
-// ===== ANIMAÇÃO DE CARREGAMENTO =====
-window.addEventListener('load', () => {
-    document.body.style.opacity = '1';
-});
-
-// ===== INTERATIVIDADE ADICIONAL =====
-// Fazer os botões de mensagem terem efeito de ripple
-document.querySelectorAll('.msg-button').forEach(button => {
-    button.addEventListener('click', function(e) {
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-        
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-    });
-});
-
-// Adicionar confete ao clicar em mensagens (opcional)
-function triggerConfetti() {
-    // Simples implementação de confete
-    for (let i = 0; i < 10; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.pointerEvents = 'none';
-        confetti.innerHTML = '💕';
-        confetti.style.fontSize = '2rem';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-10px';
-        confetti.style.zIndex = '1000';
-        
-        document.body.appendChild(confetti);
-        
-        const duration = 2 + Math.random() * 1;
-        const xMove = (Math.random() - 0.5) * 200;
-        
-        anime({
-            targets: confetti,
-            translateY: window.innerHeight + 100,
-            translateX: xMove,
-            opacity: 0,
-            duration: duration * 1000,
-            easing: 'easeInQuad',
-            complete: () => confetti.remove()
-        });
-    }
-}
-
-// Simpler confetti effect without anime library
-function simpleConfetti() {
-    for (let i = 0; i < 8; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.pointerEvents = 'none';
-        confetti.innerHTML = '💕';
-        confetti.style.fontSize = '1.5rem';
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-10px';
-        confetti.style.zIndex = '1000';
-        confetti.style.opacity = '1';
-        confetti.style.transition = 'all 2s ease-in';
-        
-        document.body.appendChild(confetti);
-        
-        setTimeout(() => {
-            confetti.style.opacity = '0';
-            confetti.style.transform = `translateY(${window.innerHeight + 100}px) translateX(${(Math.random() - 0.5) * 200}px)`;
-        }, 10);
-        
-        setTimeout(() => confetti.remove(), 2000);
-    }
-}
-
-// Adicionar confete quando mostrar mensagem
-const originalMostrarMensagem = window.mostrarMensagem;
-window.mostrarMensagem = function(index) {
-    originalMostrarMensagem(index);
-    simpleConfetti();
-};
